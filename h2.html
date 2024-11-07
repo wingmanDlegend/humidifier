@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주택유형별 면적에 따른 적정가습량 산출</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #87CEEB; /* Light blue background */
+        }
+        h1 {
+            text-align: center;
+            color: white;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: white;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>주택유형별 면적에 따른 적정가습량 산출</h1>
+    
+    <label for="type">주거 유형:</label>
+    <select id="type" required>
+        <option value="apartment">아파트</option>
+        <option value="house">주택</option>
+    </select>
+
+    <label for="unit">면적 단위:</label>
+    <select id="unit" required>
+        <option value="pyeong">평</option>
+        <option value="m2">m²</option>
+    </select>
+
+    <label for="area">면적 입력:</label>
+    <input type="number" id="area" placeholder="예: 10" required>
+
+    <button onclick="calculateHumidifier()">적합한 가습량 계산</button>
+
+    <div class="result" id="result">
+        가습량 계산 결과가 여기에 표시됩니다.
+    </div>
+
+    <script>
+        function calculateHumidifier() {
+            const type = document.getElementById("type").value;
+            const unit = document.getElementById("unit").value;
+            let area = parseFloat(document.getElementById("area").value);
+
+            if (isNaN(area) || area <= 0) {
+                document.getElementById("result").innerHTML = "올바른 면적 값을 입력해 주세요.";
+                return;
+            }
+
+            // Convert m² to 평 if needed
+            if (unit === "m2") {
+                area /= 3.3; // Convert m² to 평
+            }
+
+            const data = {
+                apartment: [
+                    { area: 4.3, humidifier: 200 },
+                    { area: 6.4, humidifier: 300 },
+                    { area: 8.6, humidifier: 400 },
+                    { area: 10.7, humidifier: 500 },
+                    { area: 12.9, humidifier: 600 },
+                    { area: 15, humidifier: 700 },
+                    { area: 17.2, humidifier: 800 },
+                    { area: 19.3, humidifier: 900 },
+                    { area: 21.4, humidifier: 1000 }
+                ],
+                house: [
+                    { area: 3.2, humidifier: 200 },
+                    { area: 4.8, humidifier: 300 },
+                    { area: 6.4, humidifier: 400 },
+                    { area: 8, humidifier: 500 },
+                    { area: 9.6, humidifier: 600 },
+                    { area: 11.2, humidifier: 700 },
+                    { area: 12.8, humidifier: 800 },
+                    { area: 14.4, humidifier: 900 },
+                    { area: 16, humidifier: 1000 }
+                ]
+            };
+
+            const typeData = data[type];
+            let recommendedHumidifier = null;
+
+            // Check if the area exceeds the maximum available data
+            if (area > typeData[typeData.length - 1].area) {
+                document.getElementById("result").innerHTML = "해당 면적에 대한 데이터는 없습니다";
+                return;
+            }
+
+            // Find appropriate humidifier value
+            for (let i = 0; i < typeData.length; i++) {
+                if (area <= typeData[i].area) {
+                    recommendedHumidifier = typeData[i].humidifier * 1.42; // Apply 1.42 multiplier
+                    break;
+                }
+            }
+
+            document.getElementById("result").innerHTML = `추천 가습량: ${recommendedHumidifier.toFixed(2)} mL/h`;
+        }
+    </script>
+</body>
+</html>
