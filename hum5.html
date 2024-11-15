@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유튜브 채널 이거어때 주택유형별 면적에 따른 적정가습량 산출 계산기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #87CEEB; /* Light blue background */
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            line-height: 1.5;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: white;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>유튜브 채널 이거어때<br>주택유형별 면적에 따른 적정가습량 산출 계산기</h1>
+    
+    <label for="type">주거 유형:</label>
+    <select id="type" required>
+        <option value="apartment">아파트</option>
+        <option value="house">주택</option>
+    </select>
+
+    <label for="unit">면적 단위:</label>
+    <select id="unit" required>
+        <option value="m2">m²</option>
+        <option value="pyeong">평</option>
+    </select>
+
+    <label for="area">면적 값:</label>
+    <input type="number" id="area" placeholder="예: 10" required>
+
+    <button onclick="calculateHumidifier()">적합한 가습량 계산</button>
+
+    <div class="result" id="result">
+        가습량 계산 결과가 여기에 표시됩니다.
+    </div>
+
+    <script>
+        function calculateHumidifier() {
+            const type = document.getElementById("type").value;
+            const unit = document.getElementById("unit").value;
+            let area = parseFloat(document.getElementById("area").value);
+
+            if (isNaN(area) || area <= 0) {
+                document.getElementById("result").innerHTML = "올바른 면적 값을 입력해 주세요.";
+                return;
+            }
+
+            // Convert pyeong to m² if necessary
+            if (unit === "pyeong") {
+                area = area * 3.3;
+            }
+
+            const data = {
+                apartment: [
+                    { area: 14.2, humidifier: 200 },
+                    { area: 21.3, humidifier: 300 },
+                    { area: 28.4, humidifier: 400 },
+                    { area: 35.5, humidifier: 500 },
+                    { area: 42.6, humidifier: 600 },
+                    { area: 49.6, humidifier: 700 },
+                    { area: 56.7, humidifier: 800 },
+                    { area: 63.8, humidifier: 900 },
+                    { area: 70.9, humidifier: 1000 }
+                ],
+                house: [
+                    { area: 10.6, humidifier: 200 },
+                    { area: 15.9, humidifier: 300 },
+                    { area: 21.2, humidifier: 400 },
+                    { area: 26.5, humidifier: 500 },
+                    { area: 31.7, humidifier: 600 },
+                    { area: 37, humidifier: 700 },
+                    { area: 42.3, humidifier: 800 },
+                    { area: 47.6, humidifier: 900 },
+                    { area: 52.9, humidifier: 1000 }
+                ]
+            };
+
+            const typeData = data[type];
+            let recommendedHumidifier = null;
+
+            for (let i = 0; i < typeData.length; i++) {
+                if (area <= typeData[i].area) {
+                    recommendedHumidifier = typeData[i].humidifier * 1.42; // 1.42배 곱하여 출력
+                    break;
+                }
+            }
+
+            if (recommendedHumidifier) {
+                document.getElementById("result").innerHTML = `
+                    추천 가습량: ${recommendedHumidifier.toFixed(2)} mL/h<br>
+                    <small>표시된 적정 가습량 제품을 구매하시면 최대 단계의 2/3 정도로 돌려도 입력하신 면적을 충분하게 가습해 줍니다.</small>
+                `;
+            } else {
+                document.getElementById("result").innerHTML = "해당 면적에 대한 데이터는 없습니다.";
+            }
+        }
+    </script>
+</body>
+</html>
